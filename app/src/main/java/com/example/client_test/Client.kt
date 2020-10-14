@@ -1,4 +1,5 @@
 import android.system.Os.socket
+import com.example.client_test.decodeText
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.OutputStream
@@ -48,10 +49,18 @@ class Client(address: String, port: Int) {
     }
 
     private fun read() {
-
+        var nextParagraph =0
         while (connected) {
             if(reader.hasNextLine()) {
-                println(reader.nextLine())
+                if(nextParagraph<1) {
+                    val plainText = decodeText(reader.nextLine())
+                    nextParagraph++
+                    println(plainText)
+                }else{
+                    println("\n")
+                    nextParagraph=0
+                }
+
             }
         }
     }
