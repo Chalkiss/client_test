@@ -6,15 +6,15 @@ import java.io.OutputStream
 import java.net.Socket
 import java.nio.charset.Charset
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
 
 fun main(args: Array<String>) {
     val address = "192.168.1.77"
     val port = 10201
-
     val client = Client(address, port)
-    client.run()
+    client.read()
 }
 
 class Client(address: String, port: Int) {
@@ -24,44 +24,54 @@ class Client(address: String, port: Int) {
     init {
         println("Connected to server at $address on port $port")
     }
-
+    var  fullOutput = ArrayList<String>()
     private val reader: Scanner = Scanner(connection.getInputStream())
     private val writer: OutputStream = connection.getOutputStream()
 
-    fun run() {
-        thread { read() }
-        while (connected) {
-            val input = readLine() ?: ""
-            if ("exit" in input) {
-                connected = false
-                reader.close()
-                connection.close()
-            } else {
-                write(input)
-
+ /*   fun run(): Array<String> { // button na wejście do activity wywołuje run, run wywołuje crawler raz.
+        thread { outputToSend= read()
+            return outputToSend
+        }
+        if(connected) {
+            val input =  ""
+            if ("" == input) {
+                write(" \n")
             }
         }
 
     }
-
+*/
     private fun write(message: String) {
         writer.write((message + '\n').toByteArray(Charset.defaultCharset()))
     }
 
-    private fun read() {
-        var nextParagraph =0
-        while (connected) {
-            if(reader.hasNextLine()) {
-                if(nextParagraph<1) {
-                    val plainText = decodeText(reader.nextLine())
-                    nextParagraph++
-                    println(plainText)
-                }else{
-                    println("\n")
-                    nextParagraph=0
-                }
+     fun read(): ArrayList<String> {
+        if(connected) {
+            val input =  ""
+            if ("" == input) {
+                write(" \n")
+            }
+        }
+         var nextParagraph = 0
+        while(reader.hasNextLine()) {
+            if (nextParagraph < 1) {
+                val plainText = decodeText(reader.nextLine())
+                print(plainText)
+                fullOutput.add(plainText)
+                nextParagraph++
+                //                  return plainText
+            } else {
+                println("\n")
+                nextParagraph = 0
+
 
             }
         }
+ //        connected = false
+  //       reader.close()
+   //      connection.close()
+        return fullOutput
     }
+
+
 }
